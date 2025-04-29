@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axioxPrivate from "../api/useAxiosPrivate.ts";
+import { toast } from "react-toastify";
 
 const SlackSender = () => {
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -11,11 +12,17 @@ const SlackSender = () => {
 
   const canSend = !!delay && message && webhookUrl;
 
+  const resetInputField = () => {
+    setWebhookUrl("");
+    setMessage("");
+    setDelay(0);
+    setUnit("seconds");
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSend) return;
     setIsSending(true);
-
+    toast.info(`Message will be sent in ${delay} ${unit}`);
     let delayInMs = delay * 1000;
     if (unit === "minutes") delayInMs = delay * 60 * 1000;
     if (unit === "hours") delayInMs = delay * 60 * 60 * 1000;
@@ -28,12 +35,14 @@ const SlackSender = () => {
           webhookUrl,
           message: messagetemplate,
         });
-        alert("Message sent to Slack!");
+        toast.success("Message sent to Slack!");
       } catch (error) {
-        console.error("Failed to send message", error);
-        alert("Failed to send message. Check console.");
+        toast.error(
+          `Failed to send message. Check webhook URL. Error: ${error}`
+        );
       } finally {
         setIsSending(false);
+        resetInputField();
       }
     }, delayInMs);
   };
