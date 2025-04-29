@@ -13,13 +13,13 @@ const SlackSender = () => {
     if (unit === "minutes") delayInMs = delay * 60 * 1000;
     if (unit === "hours") delayInMs = delay * 60 * 60 * 1000;
 
-    console.log(`Message will be sent after ${delayInMs / 1000} seconds`);
+    const messagetemplate = `From Arniel Canillo's Slack Bot: ${message}`;
 
     setTimeout(async () => {
       try {
         await axios.post("send-to-slack", {
           webhookUrl,
-          message,
+          messagetemplate,
         });
         alert("Message sent to Slack!");
       } catch (error) {
