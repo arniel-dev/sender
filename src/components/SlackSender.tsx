@@ -2,6 +2,7 @@ import { useState } from "react";
 import axioxPrivate from "../api/useAxiosPrivate.ts";
 import { toast } from "react-toastify";
 import LoadingScreen from "./LoadingScreen.tsx";
+import { isValidUrl } from "../utils/index.ts";
 
 const SlackSender = () => {
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -11,7 +12,7 @@ const SlackSender = () => {
   const [isSending, setIsSending] = useState(false);
   const axios = axioxPrivate();
 
-  const canSend = !!delay && message && webhookUrl;
+  const canSend = !!delay && message && webhookUrl && isValidUrl(webhookUrl);
 
   const resetInputField = () => {
     setWebhookUrl("");
@@ -51,29 +52,28 @@ const SlackSender = () => {
   return (
     <>
       {isSending && <LoadingScreen />}
-      <div className="slack-form"> ... </div>
       <form className="slack-sender-form" onSubmit={handleSubmit}>
-        <label>
-          Slack Webhook URL:
+        <div className="form-group">
+          <label>Slack Webhook URL:</label>
           <input
             type="text"
             value={webhookUrl}
             onChange={(e) => setWebhookUrl(e.target.value)}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Message:
+        <div className="form-group">
+          <label>Message:</label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Delay:
+        <div className="form-group">
+          <label>Delay:</label>
           <input
             type="number"
             min="0"
@@ -81,10 +81,10 @@ const SlackSender = () => {
             onChange={(e) => setDelay(Number(e.target.value))}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Time Unit:
+        <div className="form-group">
+          <label>Time Unit:</label>
           <select
             value={unit}
             onChange={(e) =>
@@ -95,7 +95,7 @@ const SlackSender = () => {
             <option value="minutes">Minutes</option>
             <option value="hours">Hours</option>
           </select>
-        </label>
+        </div>
 
         <button onClick={handleSubmit} disabled={!canSend || isSending}>
           {delay ? `Send in ${delay} ${unit}` : "Send"}
