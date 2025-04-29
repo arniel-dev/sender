@@ -19,7 +19,7 @@ const SlackSender = () => {
       try {
         await axios.post("send-to-slack", {
           webhookUrl,
-          messagetemplate,
+          message: messagetemplate,
         });
         alert("Message sent to Slack!");
       } catch (error) {
