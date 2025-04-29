@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axioxPrivate from "../api/useAxiosPrivate.ts";
 import { toast } from "react-toastify";
+import LoadingScreen from "./LoadingScreen.tsx";
 
 const SlackSender = () => {
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -48,55 +49,59 @@ const SlackSender = () => {
   };
 
   return (
-    <form className="slack-sender-form" onSubmit={handleSubmit}>
-      <label>
-        Slack Webhook URL:
-        <input
-          type="text"
-          value={webhookUrl}
-          onChange={(e) => setWebhookUrl(e.target.value)}
-          required
-        />
-      </label>
+    <>
+      {isSending && <LoadingScreen />}
+      <div className="slack-form"> ... </div>
+      <form className="slack-sender-form" onSubmit={handleSubmit}>
+        <label>
+          Slack Webhook URL:
+          <input
+            type="text"
+            value={webhookUrl}
+            onChange={(e) => setWebhookUrl(e.target.value)}
+            required
+          />
+        </label>
 
-      <label>
-        Message:
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          required
-        />
-      </label>
+        <label>
+          Message:
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
+          />
+        </label>
 
-      <label>
-        Delay:
-        <input
-          type="number"
-          min="0"
-          value={delay}
-          onChange={(e) => setDelay(Number(e.target.value))}
-          required
-        />
-      </label>
+        <label>
+          Delay:
+          <input
+            type="number"
+            min="0"
+            value={delay}
+            onChange={(e) => setDelay(Number(e.target.value))}
+            required
+          />
+        </label>
 
-      <label>
-        Time Unit:
-        <select
-          value={unit}
-          onChange={(e) =>
-            setUnit(e.target.value as "seconds" | "minutes" | "hours")
-          }
-        >
-          <option value="seconds">Seconds</option>
-          <option value="minutes">Minutes</option>
-          <option value="hours">Hours</option>
-        </select>
-      </label>
+        <label>
+          Time Unit:
+          <select
+            value={unit}
+            onChange={(e) =>
+              setUnit(e.target.value as "seconds" | "minutes" | "hours")
+            }
+          >
+            <option value="seconds">Seconds</option>
+            <option value="minutes">Minutes</option>
+            <option value="hours">Hours</option>
+          </select>
+        </label>
 
-      <button onClick={handleSubmit} disabled={!canSend || isSending}>
-        {delay ? `Send in ${delay} ${unit}` : "Send"}
-      </button>
-    </form>
+        <button onClick={handleSubmit} disabled={!canSend || isSending}>
+          {delay ? `Send in ${delay} ${unit}` : "Send"}
+        </button>
+      </form>
+    </>
   );
 };
 
