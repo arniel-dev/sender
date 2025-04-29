@@ -6,9 +6,16 @@ const SlackSender = () => {
   const [message, setMessage] = useState("");
   const [delay, setDelay] = useState(0);
   const [unit, setUnit] = useState<"seconds" | "minutes" | "hours">("seconds");
+  const [isSending, setIsSending] = useState(false);
   const axios = axioxPrivate();
+
+  const canSend = !!delay && message && webhookUrl;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSend) return;
+    setIsSending(true);
+
     let delayInMs = delay * 1000;
     if (unit === "minutes") delayInMs = delay * 60 * 1000;
     if (unit === "hours") delayInMs = delay * 60 * 60 * 1000;
@@ -25,6 +32,8 @@ const SlackSender = () => {
       } catch (error) {
         console.error("Failed to send message", error);
         alert("Failed to send message. Check console.");
+      } finally {
+        setIsSending(false);
       }
     }, delayInMs);
   };
@@ -75,7 +84,9 @@ const SlackSender = () => {
         </select>
       </label>
 
-      <button type="submit">Schedule Slack Message</button>
+      <button onClick={handleSubmit} disabled={!canSend || isSending}>
+        {delay ? `Send in ${delay} ${unit}` : "Send"}
+      </button>
     </form>
   );
 };
